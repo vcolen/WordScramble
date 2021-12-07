@@ -119,9 +119,9 @@ struct ContentView: View {
     func restartGame() {
         storeScore()
         withAnimation {
-        rootWord = allWords.randomElement()!
-        score = 0
-        usedWords = []
+            rootWord = allWords.randomElement()!
+            score = 0
+            usedWords = []
         }
     }
     
