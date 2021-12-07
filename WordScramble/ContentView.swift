@@ -21,6 +21,7 @@ struct ContentView: View {
     @State private var showingError = false
     
     @State private var score = 0
+    @State private var totalScore = 0
     
     var body: some View {
         NavigationView {
@@ -31,7 +32,7 @@ struct ContentView: View {
                             .autocapitalization(.none)
                     }
                     
-                    Section("Used Words") {
+                    Section("Used Words (\(score) points)") {
                         ForEach(usedWords, id: \.self) { word in
                             HStack {
                                 Image(systemName: "\(word.count).circle")
@@ -39,17 +40,21 @@ struct ContentView: View {
                             }
                         }
                     }
+                    .listSectionSeparator(.hidden)
                     
                     Section("Previous Words") {
-                        ForEach(0..<previousRootWords.count) { index in
+                        ForEach(0..<previousRootWords.count, id: \.self) { index in
                             HStack {
                                 Image(systemName: "\(previousScores[index]).circle")
+                                Text("points")
+                                Spacer()
                                 Text(previousRootWords[index])
                             }
                         }
                     }
                 }
-                Text("Your score: \(score)")
+                
+                Text("Total score: \(totalScore)")
                     .font(.title)
             }
             .navigationTitle(rootWord)
@@ -113,15 +118,19 @@ struct ContentView: View {
     
     func restartGame() {
         storeScore()
+        withAnimation {
         rootWord = allWords.randomElement()!
         score = 0
+        usedWords = []
+        }
     }
     
     func storeScore() {
-        previousRootWords.insert(rootWord, at: 0)
-        print(previousRootWords.count)
-        previousScores.insert(score, at: 0)
-        print( previousScores.count)
+        withAnimation {
+            previousRootWords.insert(rootWord, at: 0)
+            previousScores.insert(score, at: 0)
+            totalScore += score
+        }
     }
     
     func addNewWord() {
